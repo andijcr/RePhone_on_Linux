@@ -7,6 +7,8 @@ extern "C" {
 	#include "vmtype.h"
 	#include "vmthread.h"
 
+	#include "GATTClient.c"
+
 	int remote_CCall(lua_State *L, lua_CFunction func);
 	void remote_lua_call(VMUINT16 type, void *params);
 	extern int g_shell_result;
@@ -90,9 +92,48 @@ extern "C" {
 	}
 
 
+	static int _acquire(lua_State *L){
+		//*acquire params from lua_Statev--- later
 
 
+		app_client_check_bt_on_off();	//open bluetooth and start callback chain
+		//erroneous: potrebbe aspettare per sempre
+		vm_signal_wait(ortobio_signal);
+		//client registrato. adesso connetto ai singoli server
+		for(auto& bd_addr: addresses){
+			idx=0;
+            memcpy(&g_app_client_bd_addr_list[idx], bd_addr, sizeof(vm_bt_gatt_address_t));
+			vm_bt_gatt_client_connect(g_appc_cntx.context_handle, bd_addr, VM_TRUE);
+			vm_signal_wait(ortobio_signal);
+		}
+		return 1;
+	}
 
+	static int acquire(lua_State *L){
+	    if (ortobio.cb_ref != LUA_NOREF) {
+	    	luaL_unref(L, LUA_REGISTRYINDEX, ortobio.cb_ref);
+	    	ortobio.cb_ref = LUA_NOREF;
+	    }
+
+	    if ((lua_type(L, 1) == LUA_TFUNCTION) || (lua_type(L, 1) == LUA_TLIGHTFUNCTION)) {
+			lua_pushvalue(L, 1);
+			ortobio.cb_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	    }
+
+	    g_shell_result = -9;
+		CCwait = 20000;
+		remote_CCall(L, &_acquire);
+		if (g_shell_result < 0) { // no response or error
+	        lua_pushinteger(L, g_shell_result);
+			g_shell_result = 1;
+		}
+		else {
+			g_shell_result = 1;
+			lua_pushinteger(L, 0);
+		}
+		return g_shell_result;
+
+	}
 
 	#undef MIN_OPT_LEVEL
 	#define MIN_OPT_LEVEL 0
@@ -100,6 +141,7 @@ extern "C" {
 
 	const LUA_REG_TYPE ortobio_map[] = {
 			{LSTRKEY("test"), LFUNCVAL(test)},
+			{LSTRKEY("acquire"), LFUNCVAL(acquire)},
 	        {LNILKEY, LNILVAL}
 	};
 
