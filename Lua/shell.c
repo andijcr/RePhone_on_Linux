@@ -870,6 +870,14 @@ VMINT32 shell_thread(VM_THREAD_HANDLE thread_handle, void* user_data)
 	                params->busy = 0;
                 }
                 break;
+            case CB_FUNC_ORTOBIO_DONE: {
+                cb_func_param_ortobio_t *params = (cb_func_param_ortobio_t*)message.user_data;
+                lua_rawgeti(L, LUA_REGISTRYINDEX, params->cb_ref);
+                lua_pushstring(L, params->buff);
+                lua_pcall(L, 1, 0, 0);
+
+                }
+                break;
         }
     }
     // ^^^^ Main loop ^^^^

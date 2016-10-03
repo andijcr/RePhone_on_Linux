@@ -120,6 +120,9 @@ typedef enum
 	CB_FUNC_BT_RECV,
 	CB_FUNC_BT_CONNECT,
 	CB_FUNC_BT_DISCONNECT,
+
+	CB_FUNC_ORTOBIO_DONE,
+
 	CB_FUNC_SMS_LIST,
 	CB_FUNC_SMS_READ,
 	CB_FUNC_SMS_NEW,
@@ -196,6 +199,13 @@ typedef struct {
 	int		bufptr;
 	int		busy;
 } cb_func_param_bt_t;
+
+typedef struct {
+
+	int cb_ref;
+	char buff[50];
+
+} cb_func_param_ortobio_t;
 
 typedef struct {
 	int		cb_ref;

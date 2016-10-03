@@ -3,6 +3,7 @@ WORKSPACE_PATH = ../
 
 PROJECT = lua
 
+OBJECTS += ortobio.o
 OBJECTS += main.o retarget.o shell.o audio.o bt.o gsm.o timer.o gpio.o i2c.o spi.o net.o https.o sntp.o struct.o sensor.o bme280.o
 OBJECTS += screen.o lua_cjson.o fpconv.o strbuf.o md5.o sha1.o sha2.o bit.o
 OBJECTS += mqtt.o mqtt_client.o mqtt_packet.o mqtt_socket.o mqttnet.o email.o ftp.o
@@ -72,7 +73,7 @@ clean:
 	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
 
 .cpp.o:
-	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
+	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++14  $(INCLUDE_PATHS) -o $@ $<
 
 
 $(PROJECT).elf: $(OBJECTS) $(SYS_OBJECTS)

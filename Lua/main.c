@@ -40,6 +40,9 @@ extern int luaopen_sys(lua_State *L);
 extern int luaopen_audio(lua_State *L);
 extern int luaopen_gsm(lua_State *L);
 extern int luaopen_bt(lua_State *L);
+
+extern int luaopen_ortobio(lua_State *L);
+
 extern int luaopen_uart(lua_State *L);
 extern int luaopen_timer(lua_State *L);
 extern int luaopen_gpio(lua_State *L);
@@ -341,6 +344,9 @@ static void lua_setup()
     luaopen_audio(shellL);
     luaopen_gsm(shellL);
     luaopen_bt(shellL);
+
+    luaopen_ortobio(shellL);
+
     luaopen_uart(shellL);
     luaopen_timer(shellL);
     luaopen_gpio(shellL);
